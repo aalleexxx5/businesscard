@@ -1,7 +1,8 @@
-var c,ctx, SIZE_OF_SPECTRUM,SIZE_OF_SQUARE;
+var c,ctx, SIZE_OF_SPECTRUM,SIZE_OF_SQUARE,animationPhase;
 var CENTER_X,CENTER_Y;
 const UPDATE_FREQ = 20;
 const ANIMATION_DURATION = 50;
+const INITIAL_ROTATION = 0.25;
 var f=0;
 function init() {
     function resize(){
@@ -30,53 +31,84 @@ function init() {
     resize();
     window.addEventListener("resize", resize,false);
 
-    ctx.fillStyle = constructGradiant(0);
+    ctx.fillStyle = constructGradient(0);
     ctx.fillRect(10,10,SIZE_OF_SPECTRUM,SIZE_OF_SQUARE);
     setInterval(update,UPDATE_FREQ);
+    window.requestAnimationFrame(draw);
 }
 
 
 var boxes = [];
-function Box(x,y,s,n){
+function Box(x,y,s,r){
     this.x=x;
     this.y=y;
     this.s=s;
-    this.n=n;
+    this.r=r;
 }
 
-function update(){
-    ctx.fillStyle="#141221";
-    ctx.fillRect(0,0,c.width,c.height);
-    ctx.fillStyle="#ffffff";
-    var animationPhase = Math.floor(f/ANIMATION_DURATION);
-    ctx.fillText(animationPhase.toString(),50,50);
+function update(){//updates values once every ~20msec
+    animationPhase = Math.floor(f/ANIMATION_DURATION);
 
-    //draw boxes on screen
-    if (boxes.length<5&&animationPhase==boxes.length){
-        boxes[animationPhase]=createBox(animationPhase);
-    } else if(animationPhase > 4 && boxes[0].s<SIZE_OF_SQUARE){
-        for(i=0;i<boxes.length;i++){
-            boxes[i].s++;
-        }
+    //Add boxes on screen
+    if (boxes.length<5&&animationPhase==boxes.length) {
+        boxes[animationPhase] = createBox(animationPhase);
+    }
+    else if(boxes[4]==undefined){
     }
     //expand boxes
+    else if(boxes[0].s<SIZE_OF_SQUARE){
+        if(animationPhase > 4 ) {
+            for (var i = 0; i < boxes.length; i++) {
+                boxes[i].s++;
+            }
+        }
+    }
+    //rotate boxes
+    else if(boxes[4].r>0) {
+        for (i = 0; i < boxes.length; i++) {
+            if (boxes[i].r != 0) {
+                boxes[i].r -= 0.1*(INITIAL_ROTATION/5);
+            }
+        }
+    }
+    //Add glow effect
+    else{
+        /*
+        box 3 stays
+        box 2 & 4 moves by +- SIZE_OF_SQUARE/2
+        box 1 & 5 moves by +- SIZE_OF_SQUARE
+         */
+        ctx.fillStyle="#ffffff";
+        ctx.fillText(animationPhase.toString(),50,50);
 
-    for(var i=0;i<boxes.length;i++){
-        ctx.save();
-        ctx.translate(boxes[i].x,boxes[i].y);
-        ctx.fillStyle = constructGradiant(i);
-        ctx.fillRect(0,0,boxes[i].s,SIZE_OF_SQUARE);
-        ctx.restore();
+
     }
     f++;
 }
 
-
-function createBox(num){
-    return new Box(CENTER_X+(num*SIZE_OF_SQUARE*1.5)-(2*SIZE_OF_SQUARE*1.5+SIZE_OF_SQUARE/2),CENTER_Y-SIZE_OF_SQUARE/2,20,0);
+function draw(){ //runes every Frame by browser
+    ctx.fillStyle="#141221";
+    ctx.fillRect(0,0,c.width,c.height);
+//    ctx.fillStyle="#ffffff";
+//    ctx.fillText(animationPhase.toString(),50,50);
+    for(var i=0;i<boxes.length;i++){
+        ctx.save();
+        ctx.translate(boxes[i].x+SIZE_OF_SQUARE/2,boxes[i].y+SIZE_OF_SQUARE/2);
+        ctx.rotate(boxes[i].r*Math.PI);
+        ctx.translate(-SIZE_OF_SQUARE/2,-SIZE_OF_SQUARE/2);
+        ctx.fillStyle = constructGradient(i);
+        ctx.fillRect(0,0,boxes[i].s,SIZE_OF_SQUARE);
+        ctx.restore();
+    }
+    window.requestAnimationFrame(draw);
 }
 
-function constructGradiant(num){
+
+function createBox(num){
+    return new Box(CENTER_X+(num*SIZE_OF_SQUARE*1.5)-(2*SIZE_OF_SQUARE*1.5+SIZE_OF_SQUARE/2),CENTER_Y-SIZE_OF_SQUARE/2,20,INITIAL_ROTATION);
+}
+
+function constructGradient(num){
     var grd = ctx.createLinearGradient(-(SIZE_OF_SQUARE*num),0,SIZE_OF_SPECTRUM-(SIZE_OF_SQUARE*num),num);
     grd.addColorStop(0,"#211E3D");
     grd.addColorStop(0.142,"#30327C");
