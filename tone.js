@@ -19,17 +19,19 @@
 
 function playSeattle(){
     var seattleFrequencies = [349.23, 466.16, 587.33, 523.33, 466.16, 392, 466.16 , 587.33, 523.25, 466.16, 349.23, 392, 466.16, 523.25, 466.16, 523.25 ,587.33, 466.16];
-    var seattleTimings = [0.375,0.375,0.25,0.50,0.50,0.375,0.375,0.25,0.50,0.50,1.25,0.25,0.25,1.00,0.25,0.125,0.4,0.6];
+    var seattleTimings = [0.375,0.375,0.25,0.50,0.50,0.375,0.375,0.25,0.50,0.50,1.25,0.25,0.25,1.00,0.25,0.125,0.4,0.5];
     var arpFreqs = [466.16,698.46,466.16,466.16,698.46,932.33,466.16,880,932.33,698.46,880,587.33,698.46,698.46,587.33];
     var bassFreqs =   [116.54,   0,  98,  0,77.78,  0,58.27,   0,87.31,  0,77.78,  0];
     var bassTimings = [1.3,0.71,0.8,0.21,0.8,0.21,1.3,0.71,0.8,0.21,0.71,0.21];
-    var arpTempo = 0.135;
+    var kickTimings = [0.38,0.36,0.96,0.28,1.02,1];
+    var arpTempo = 0.133;
     var samples = []; //new Float32Array(samples_length);
     var samples1 =[];
     var samplesB =[];
     var kicks=[];
     var claps = [];
     var openingBeats=[];
+    var test=[];
 
     var samples_length;               // Plays for 1 second (44.1 KHz)
     for(var f=0; f<seattleFrequencies.length; f++){
@@ -60,8 +62,8 @@ function playSeattle(){
         }
     }
 
-    for(f=0; f<seattleFrequencies.length; f++){
-        samples_length=44100*0.5;
+    for(f=0; f<kickTimings.length; f++){
+        samples_length=44100*kickTimings[f];
         for (i=0; i < samples_length ; i++) { // fills array with samples
             if(i<12000) {
                 kicks[kicks.length] = Math.pow(2.8, -(i / 3000)) * Math.sin((58.27 / 2) * 2 * Math.PI * (i / 44100)); // wave equation (between -1,+1)
@@ -72,8 +74,14 @@ function playSeattle(){
     }
     samples_length=44100*2;
     for (i=0; i < samples_length ; i++) { // fills array with samples
-        claps[claps.length] =0.1* Math.pow(2.8,-(i / 1500))*(Math.random()*2); // wave equation (between -1,+1)
+        claps[claps.length] =0.02* Math.pow(2.8,-(i / 1500))*(Math.random()*2); // wave equation (between -1,+1)
     }
+    samples_length=44100*10;
+    for (i=0; i < samples_length ; i++) { // fills array with samples
+        f=(Math.pow(2.72,i/44100)+50);
+        test[test.length] =0.2*(Math.sin( f * 2*Math.PI*(i/44100))+2*((i/(100000/f))-Math.floor(0.5+(i/(100000/f))))/2); // wave equation (between -1,+1)
+    }//(Math.sin( f * 2*Math.PI*(i/44100))+
+
     /*
     for (i=0; i < 44100*(arpTempo*arpFreqs.length+arpTempo*3) ; i++) { // fills array with samples
         openingBeats[i]=0;
@@ -90,19 +98,19 @@ function playSeattle(){
     }*/
 
 
-    for(i=0;i<samples.length;i++){//+kicks[i]
-        samples[i] = ((samples[i]+samplesB[i]+claps[i%claps.length]+samples1[i%samples1.length])/4);//Generates a very audible click sound at the end TODO: fix this, Bodging is OK
+    for(i=0;i<samples.length;i++){//++kicks[i%kicks.length]
+        samples[i] = ((samples[i]+samplesB[i]+kicks[i%kicks.length]+claps[i%claps.length]+samples1[i%samples1.length])/1.5);
     }
 /*
     f=samples1.length;
     for(i=0;i<openingBeats.length;i++){
         samples1[i]=samples1[i%f]+openingBeats[i]/2;
     }*/
-
+/*
     var temp = [];
-    for(i=0;i<samples.length-7000;i++){
+    for(i=0;i<samples.length-6000;i++){
         temp[i] = samples[i];
-    }
+    }*/
     /*
     for(i=samples.length-6838;i<samples.length;i++){
         samples[i]=;
@@ -111,19 +119,20 @@ function playSeattle(){
     var wave = new RIFFWAVE();
     var audio = new Audio();
     var audio2 = new Audio();
-    //var audio3 = new Audio();
+    var audio3 = new Audio();
     audio.loop=true;
     audio2.loop=true;
     //audio3.loop=true;
-    var samples2=convert16bit(temp);
+    var samples2=convert16bit(samples);
     var samples3=convert16bit(samples1);
-    //var samples4=convert255(samplesB);
+    var samples4=convert16bit(test);
     wave.Make(samples2);
     audio.src=wave.dataURI;
     wave.Make(samples3);
     audio2.src=wave.dataURI;
-    //wave.Make(samples4);
-    //audio3.src=wave.dataURI;
+    wave.Make(samples4);
+    audio3.src=wave.dataURI;
+//    setTimeout(function() { audio3.play(); }, 10);
     setTimeout(function() { audio.play(); }, (arpTempo*1000*arpFreqs.length)*2); // page needs time to load?
     setTimeout(function() { audio2.play(); }, 10); // page needs time to load?
     setTimeout(function() { audio2.loop=false; }, (arpTempo*1000*arpFreqs.length+200)); // page needs time to load?
