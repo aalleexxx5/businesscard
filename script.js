@@ -1,8 +1,9 @@
-var c,ctx, SIZE_OF_SPECTRUM,SIZE_OF_SQUARE,animationPhase;
+var c,ctx, SIZE_OF_SPECTRUM,SIZE_OF_SQUARE,tock,glow=0;
 var CENTER_X,CENTER_Y;
 const UPDATE_FREQ = 20;
 const ANIMATION_DURATION = 50;
 const INITIAL_ROTATION = 0.25;
+const GLOW_DURATION=150;
 var f=0;
 function init() {
     function resize(){
@@ -31,7 +32,7 @@ function init() {
     resize();
     window.addEventListener("resize", resize,false);
 
-    ctx.fillStyle = constructGradient(0);
+    ctx.fillStyle = constructGlow(1);
     ctx.fillRect(10,10,SIZE_OF_SPECTRUM,SIZE_OF_SQUARE);
     setInterval(update,UPDATE_FREQ);
     window.requestAnimationFrame(draw);
@@ -46,32 +47,35 @@ function Box(x,y,s,r){
     this.r=r;
 }
 
-function update(){//updates values once every ~20msec
-    animationPhase = Math.floor(f/ANIMATION_DURATION);
+function update() {//updates values once every ~20msec
+    tock = Math.floor(f / ANIMATION_DURATION);
 
     //Add boxes on screen
-    if (boxes.length<5&&animationPhase==boxes.length) {
-        boxes[animationPhase] = createBox(animationPhase);
+    if (boxes.length < 5 && tock == boxes.length) {
+        boxes[tock] = createBox(tock);
     }
-    else if(boxes[4]==undefined){
+    else if (boxes[4] == undefined) {
     }
     //expand boxes
-    else if(boxes[0].s<SIZE_OF_SQUARE){
-        if(animationPhase > 4 ) {
+    else if (boxes[0].s < SIZE_OF_SQUARE) {
+        if (tock > 4) {
             for (var i = 0; i < boxes.length; i++) {
                 boxes[i].s++;
             }
         }
     }
     //rotate boxes
-    else if(boxes[4].r>0) {
+    else if (boxes[4].r >= 0) {
         for (i = 0; i < boxes.length; i++) {
             if (boxes[i].r != 0) {
-                boxes[i].r -= 0.1*(INITIAL_ROTATION/5);
+                boxes[i].r -= 0.1 * (INITIAL_ROTATION / 5);
             }
         }
     }
     //Add glow effect
+    else if(boxes[4].r<=0&&glow<1){
+        glow+=UPDATE_FREQ/GLOW_DURATION;
+    }
     else{
         /*
         box 3 stays
@@ -79,7 +83,7 @@ function update(){//updates values once every ~20msec
         box 1 & 5 moves by +- SIZE_OF_SQUARE
          */
         ctx.fillStyle="#ffffff";
-        ctx.fillText(animationPhase.toString(),50,50);
+        ctx.fillText(tock.toString(),50,50);
 
 
     }
@@ -89,8 +93,11 @@ function update(){//updates values once every ~20msec
 function draw(){ //runes every Frame by browser
     ctx.fillStyle="#141221";
     ctx.fillRect(0,0,c.width,c.height);
+    if(glow!=0){
+        drawGlowEffect();
+    }
 //    ctx.fillStyle="#ffffff";
-//    ctx.fillText(animationPhase.toString(),50,50);
+//    ctx.fillText(tock.toString(),50,50);
     for(var i=0;i<boxes.length;i++){
         ctx.save();
         ctx.translate(boxes[i].x+SIZE_OF_SQUARE/2,boxes[i].y+SIZE_OF_SQUARE/2);
@@ -103,9 +110,32 @@ function draw(){ //runes every Frame by browser
     window.requestAnimationFrame(draw);
 }
 
+function drawGlowEffect(){
+    ctx.fillStyle=constructGlow(glow);
+    for(var i=0;i<boxes.length;i++){
+        ctx.save();
+        for(f=0;f<4;f++){
+            ctx.save();
+            ctx.translate(boxes[i].x+SIZE_OF_SQUARE/2,boxes[i].y+SIZE_OF_SQUARE/2);
+            ctx.rotate(f*0.5*Math.PI);
+            ctx.translate(SIZE_OF_SQUARE/2,-SIZE_OF_SQUARE/2);
+            ctx.fillRect(0,0,SIZE_OF_SQUARE/4,SIZE_OF_SQUARE);
+            ctx.restore();
+        }
+        ctx.restore();
+    }
+}
+
 
 function createBox(num){
     return new Box(CENTER_X+(num*SIZE_OF_SQUARE*1.5)-(2*SIZE_OF_SQUARE*1.5+SIZE_OF_SQUARE/2),CENTER_Y-SIZE_OF_SQUARE/2,20,INITIAL_ROTATION);
+}
+
+function constructGlow(num){//num is 0-1
+    var grd = ctx.createLinearGradient(0,0,SIZE_OF_SQUARE/4,0);
+    grd.addColorStop(0,"rgba(255,255,255,"+num.toString()+")");
+    grd.addColorStop(1,"transparent");
+    return grd;
 }
 
 function constructGradient(num){
