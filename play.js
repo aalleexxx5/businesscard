@@ -1,8 +1,8 @@
-var c,x, SS,SQ,t,gl= 0,an,g=true, wh= 0, mp, iC, w=window, bl, tx=-2;
-var h = ["Cold facts", "Likes/Dislikes","Traits", "Warm Header", "Hot Header"];
-var io = ["Computer science student*Not great at Maths","Enjoys Coding, video games and traveling*Does not like Coffee, Crowded places and Getting up early", "Passionate*Introverted*Optimistic*Does not drink alcohol","stuff here*stuff here too*and here","stuff goes here*stuff goes here as well*don't forget here"];
+var c,x, SS,SQ,t,gl= 0,an,g=true, wh= 0, mp, iC, w=window, bl, tx=-2,ww,h1;
+var h = ["Cold facts","Skills", "Likes/Dislikes","Traits", "hot header"];
+var io = ["Sex: Male*Born in: September 1996*Nationality: Danish*Current Occupation: Student*Contact at: alexx4387@gmail.com","Abilities span a variety of programming languages*Lacking in Maths skills*Good at puzzles","Enjoys: Coding, Video games and traveling*Does not like: Coffee, Crowded places and Getting up early", "Passionate*Introverted*Optimistic*Does not drink alcohol","Consumes energy drinks when programming*Gets very passionate about a single project*Enjoys a Good story"];
 var bx = [];
-var o="rgba(255,255,255,", tr = "transparent";
+var o="rgba(255,255,255,", tr = "transparent",bg="#141221";
 var CX,CY;
 var UF = 20;
 var AD = 50;
@@ -13,15 +13,16 @@ var M=Math,P= M.PI;
 Go();
 
 function Rz() {
-    var wh= w.innerHeight, ww= w.innerWidth;
+    h1= w.innerHeight;
+    ww= w.innerWidth;
     SS = M.floor(((ww / 2) / 100)) * 100;
     SQ = SS / 5;
     CX = M.floor(ww / 2);
-    CY = M.floor(wh / 2);
+    CY = M.floor(h1 / 2);
     c.width = ww;
-    c.height = wh;
-    x.fillStyle = "#141221";
-    x.fillRect(0, 0, ww, wh);
+    c.height = h1;
+    Fs(bg);
+    Fr(0, 0, ww, h1);
     if (bx[0] != undefined) {
         if (bx[0].s > SQ) {
             for (var i = 0; i < bl; i++) {
@@ -39,11 +40,11 @@ function Go() {
     x = c.getContext("2d");
     Rz();
     w.addEventListener("Rz", Rz, false);
-    x.fillStyle = CG(1);
+    Fs(CG(1));
 
-    x.fillRect(10, 10, SS, SQ);
+    Fr(10, 10, SS, SQ);
     an = setInterval(Up, UF);
-    w.requestAnimationFrame(Dr);
+    Dr();
 }
 
 function Box(x,y,s,r){
@@ -103,11 +104,11 @@ function Up() {//updates values once every ~20msec
 }
 
 function Dr(){ //runes every Frame by browser
-    x.fillStyle="#141221";
-    x.fillRect(0,0,c.width,c.height);
+    Fs(bg);
+    Fr(0,0,ww,h1);
     if (wh!=0){
-        x.fillStyle="rgba(255,255,255,"+wh.toString()+")";
-        x.fillRect(0,0,c.width,c.height);
+        Fs(o+wh+")");
+        Fr(0,0,ww,h1);
     }
     if(tx!=-2){
         if(tx==-1) {
@@ -123,11 +124,11 @@ function Dr(){ //runes every Frame by browser
 //    x.fillText(t.toString(),50,50);
     for(var i=0; i<bl; i++){
         x.save();
-        x.translate(bx[i].x+SQ/2,bx[i].y+SQ/2);
+        Tr(bx[i].x+SQ/2,bx[i].y+SQ/2);
         x.rotate(bx[i].r*P);
-        x.translate(-SQ/2,-SQ/2);
-        x.fillStyle = CGr(i);
-        x.fillRect(0,0,bx[i].s,SQ);
+        Tr(-SQ/2,-SQ/2);
+        Fs(CGr(i));
+        Fr(0,0,bx[i].s,SQ);
         x.restore();
     }
     w.requestAnimationFrame(Dr);
@@ -135,23 +136,33 @@ function Dr(){ //runes every Frame by browser
 
 function Dt(hr, tx){
     x.save();
-    x.translate(bx[0].x, CY-SQ/2);
+    Tr(bx[0].x, CY-SQ/2);
     x.font="small-caps 56px Arial";
     x.strokeStyle=CGr(0);
     x.strokeText(hr,0,0);
     x.font="24px Arial";
-    x.fillStyle=("#545251");
-    x.translate(0,SQ);
+    Fs("#545251");
+    Tr(0,SQ);
     while(tx.contains('*')){
         var i = tx.indexOf('*');
         var t=tx.substring(0,i);
         tx=tx.substring(i+1);
-        x.translate(0,24);
+        Tr(0,24);
         x.fillText(t,0,0);
     }
-    x.translate(0,24);
+    Tr(0,24);
     x.fillText(tx,0,0);
     x.restore();
+}
+
+function Tr(a,b){
+    x.translate(a,b);
+}
+function Fr(a,b,c,d){
+    x.fillRect(a,b,c,d);
+}
+function Fs(a){
+    x.fillStyle=a;
 }
 
 function iA(){
@@ -217,18 +228,18 @@ function iA(){
 }
 
 function DGE(){
-    x.fillStyle=CG(gl);
+    Fs(CG(gl));
     for(var i=0; i<bl; i++){
         x.save();
         for(f=0;f<4;f++){
             x.save();
-            x.translate(bx[i].x+SQ/2,bx[i].y+SQ/2);
+            Tr(bx[i].x+SQ/2,bx[i].y+SQ/2);
             x.rotate(f*0.5*P);
-            x.translate(SQ/2,-SQ/2);
-            x.fillRect(0,0,SQ/4,SQ);
-            x.translate(0,SQ);
-            x.fillStyle=CGC(gl);
-            x.fillRect(0,0,SQ/4,SQ/4);
+            Tr(SQ/2,-SQ/2);
+            Fr(0,0,SQ/4,SQ);
+            Tr(0,SQ);
+            Fs(CGC(gl));
+            Fr(0,0,SQ/4,SQ/4);
             x.restore();
         }
         x.restore();
@@ -241,29 +252,28 @@ function CB(num){
 
 function CG(num){//num is 0-1
     var g = x.createLinearGradient(0,0,SQ/4,0);
-    g.addColorStop(0,o+num+")");
-    g.addColorStop(1,tr);
+    st(g,0,o+num+")");
+    st(g,1,tr);
     return g;
 }
 
 function CGC(num){
     var g = x.createRadialGradient(0,0,0,0,0,SQ/4);
-    g.addColorStop(0,o+num+")");
-    g.addColorStop(1,tr);
+    st(g,0,o+num+")");
+    st(g,1,tr);
     return g;
 }
-
+function st(g,q,w){
+    g.addColorStop(q,w);
+}
 function CGr(num){
     var g = x.createLinearGradient(-(SQ*num),0,SS-(SQ*num),num);
-    function s(q,w){
-        g.addColorStop(q,w);
-    }
-    s(0,"#211E3D");
-    s(0.142,"#30327C");
-    s(0.34,"#63C9FC");
-    s(0.456,"#0BBB56");
-    s(0.7,"#F7E920");
-    s(1,"#FF3A30");
+    st(g,0,"#211E3D");
+    st(g,0.142,"#30327C");
+    st(g,0.34,"#63C9FC");
+    st(g,0.456,"#0BBB56");
+    st(g,0.7,"#F7E920");
+    st(g,1,"#FF3A30");
     return g;
 }
 
