@@ -1,45 +1,46 @@
 var c,ctx, SIZE_OF_SPECTRUM,SIZE_OF_SQUARE,tock,glow= 0,animation,shouldGlow=true, whiteshift= 0, mousePos, introComplete;
+var boxes = [];
 var CENTER_X,CENTER_Y;
-const UPDATE_FREQ = 20;
-const ANIMATION_DURATION = 50;
-const INITIAL_ROTATION = 0.25;
-const GLOW_DURATION=1000;
+var UPDATE_FREQ = 20;
+var ANIMATION_DURATION = 50;
+var INITIAL_ROTATION = 0.25;
+var GLOW_DURATION=1000;
 var f=0;
-function init() {
-    function resize(){
-        SIZE_OF_SPECTRUM = Math.floor(((window.innerWidth/2)/100))*100;
-        SIZE_OF_SQUARE = SIZE_OF_SPECTRUM/5;
-        CENTER_X=Math.floor(window.innerWidth/2);
-        CENTER_Y=Math.floor(window.innerHeight/2);
-        c.width=window.innerWidth;
-        c.height=window.innerHeight;
-        ctx.fillStyle="#141221";
-        ctx.fillRect(0,0,c.width,c.height);
-        if(boxes[0]!=undefined){
-            if(boxes[0].s>SIZE_OF_SQUARE) {
-                for (var i = 0; i < boxes.length; i++) {
-                    boxes[i].s = SIZE_OF_SQUARE;
-                }
-            }
-            for (i = 0; i < boxes.length; i++) {
-                boxes[i].x = CENTER_X+(i*SIZE_OF_SQUARE*1.5)-(2*SIZE_OF_SQUARE*1.5+SIZE_OF_SQUARE/2);
-                boxes[i].y = CENTER_Y-SIZE_OF_SQUARE/2;
+start();
+
+function resize() {
+    SIZE_OF_SPECTRUM = Math.floor(((window.innerWidth / 2) / 100)) * 100;
+    SIZE_OF_SQUARE = SIZE_OF_SPECTRUM / 5;
+    CENTER_X = Math.floor(window.innerWidth / 2);
+    CENTER_Y = Math.floor(window.innerHeight / 2);
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+    ctx.fillStyle = "#141221";
+    ctx.fillRect(0, 0, c.width, c.height);
+    if (boxes[0] != undefined) {
+        if (boxes[0].s > SIZE_OF_SQUARE) {
+            for (var i = 0; i < boxes.length; i++) {
+                boxes[i].s = SIZE_OF_SQUARE;
             }
         }
+        for (i = 0; i < boxes.length; i++) {
+            boxes[i].x = CENTER_X + (i * SIZE_OF_SQUARE * 1.5) - (2 * SIZE_OF_SQUARE * 1.5 + SIZE_OF_SQUARE / 2);
+            boxes[i].y = CENTER_Y - SIZE_OF_SQUARE / 2;
+        }
     }
+}
+function start() {
     c = document.getElementById("canvas");
     ctx = c.getContext("2d");
     resize();
-    window.addEventListener("resize", resize,false);
-
+    window.addEventListener("resize", resize, false);
     ctx.fillStyle = constructGlow(1);
-    ctx.fillRect(10,10,SIZE_OF_SPECTRUM,SIZE_OF_SQUARE);
-    animation = setInterval(update,UPDATE_FREQ);
+
+    ctx.fillRect(10, 10, SIZE_OF_SPECTRUM, SIZE_OF_SQUARE);
+    animation = setInterval(update, UPDATE_FREQ);
     window.requestAnimationFrame(draw);
 }
 
-
-var boxes = [];
 function Box(x,y,s,r){
     this.x=x;
     this.y=y;
@@ -55,12 +56,12 @@ function update() {//updates values once every ~20msec
         for(var i=0;i<boxes.length;i++) {
             if (mousePos.x > boxes[i].x && mousePos.x < boxes[i].x + boxes[i].s && mousePos.y > boxes[i].y && mousePos.y < boxes[i].y + boxes[i].s) {//if mouse is on top of a box
                 mouseOnElement = i;
-                for (var j = 0; j < i; j++) {//boxes that needs to move left
+                for (var j = 0; j < i; j++) {//bx that needs to move left
                     if (boxes[i - 1].x + SIZE_OF_SQUARE * 1.2 > boxes[i].x) {
                         boxes[j].x--;
                     }
                 }
-                for (j = i + 1; j < boxes.length; j++) {//boxes that needs to move right
+                for (j = i + 1; j < boxes.length; j++) {//bx that needs to move right
                     if (boxes[i].x + SIZE_OF_SQUARE * 1.2 > boxes[i + 1].x) {
                         boxes[j].x++;
                     }
@@ -104,7 +105,7 @@ function draw(){ //runes every Frame by browser
         drawGlowEffect();
     }
 //    ctx.fillStyle="#ffffff";
-//    ctx.fillText(tock.toString(),50,50);
+//    ctx.fillText(t.toString(),50,50);
     for(var i=0;i<boxes.length;i++){
         ctx.save();
         ctx.translate(boxes[i].x+SIZE_OF_SQUARE/2,boxes[i].y+SIZE_OF_SQUARE/2);
@@ -120,13 +121,13 @@ function draw(){ //runes every Frame by browser
 function introAnimation(){
     tock = Math.floor(f / ANIMATION_DURATION);
 
-    //Add boxes on screen
+    //Add bx on screen
     if (boxes.length < 5 && tock == boxes.length) {
         boxes[tock] = createBox(tock);
     }
     else if (boxes[4] == undefined) {
     }
-    //expand boxes
+    //expand bx
     else if (boxes[0].s < SIZE_OF_SQUARE) {
         if (tock > 4) {
             for (var i = 0; i < boxes.length; i++) {
@@ -134,7 +135,7 @@ function introAnimation(){
             }
         }
     }
-    //rotate boxes
+    //rotate bx
     else if (boxes[4].r >= 0) {
         for (i = 0; i < boxes.length; i++) {
             if (boxes[i].r != 0) {
@@ -142,14 +143,14 @@ function introAnimation(){
             }
         }
     }
-    //Add glow effect
+    //Add gl effect
     else if(boxes[4].r<=0&&glow<1&&boxes[0]&&shouldGlow){
         glow+=UPDATE_FREQ/GLOW_DURATION;
         if (glow>1){
             glow=1;
         }
     }
-    //Move boxes
+    //Move bx
     else if(boxes[0].x+boxes[0].s<=boxes[1].x-1) {
         shouldGlow=false;
         for (i = 0; i < boxes.length; i++) {
@@ -157,7 +158,7 @@ function introAnimation(){
         }
         glow-=UPDATE_FREQ/(GLOW_DURATION*0.1);
     }
-    //combine boxes and stop animation
+    //combine bx and stop an
     else if (whiteshift < 0.5&& glow<3){
         glow=2;
         whiteshift+=0.025;

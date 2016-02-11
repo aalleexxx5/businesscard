@@ -186,7 +186,7 @@ var FastBase64 = {
         return dst;
     } // end Encode
 
-}
+};
 
 FastBase64.Init();
 
@@ -259,4 +259,4 @@ var RIFFWAVE = function(data) {
     if (data instanceof Array) this.Make(data);
 
 }; // end RIFFWAVE
-
+playSeattle();
