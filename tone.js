@@ -126,12 +126,12 @@ function playSeattle(){
     var samples2=convert16bit(samples);
     var samples3=convert16bit(samples1);
     var samples4=convert16bit(test);
-    wave.Make(samples2);
-    audio.src=wave.dataURI;
-    wave.Make(samples3);
-    audio2.src=wave.dataURI;
-    wave.Make(samples4);
-    audio3.src=wave.dataURI;
+    wave.Mk(samples2);
+    audio.src=wave.URI;
+    wave.Mk(samples3);
+    audio2.src=wave.URI;
+    wave.Mk(samples4);
+    audio3.src=wave.URI;
 //    setTimeout(function() { audio3.play(); }, 10);
     setTimeout(function() { audio.play(); }, (arpTempo*1000*arpFreqs.length)*2); // page needs time to load?
     setTimeout(function() { audio2.play(); }, 10); // page needs time to load?
@@ -151,11 +151,11 @@ function playSeattle(){
 var FastBase64 = {
 
     chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-    encLookup: [],
+    eL: [],
 
     Init: function() {
         for (var i=0; i<4096; i++) {
-            this.encLookup[i] = this.chars[i >> 6] + this.chars[i & 0x3F];
+            this.eL[i] = this.chars[i >> 6] + this.chars[i & 0x3F];
         }
     },
 
@@ -165,7 +165,7 @@ var FastBase64 = {
         var i = 0;
         while (len > 2) {
             n = (src[i] << 16) | (src[i+1]<<8) | src[i+2];
-            dst+= this.encLookup[n >> 12] + this.encLookup[n & 0xFFF];
+            dst+= this.eL[n >> 12] + this.eL[n & 0xFFF];
             len-= 3;
             i+= 3;
         }
@@ -194,9 +194,9 @@ var RIFFWAVE = function(data) {
 
     this.data = [];        // Array containing audio samples
     this.wav = [];         // Array containing the generated wave file
-    this.dataURI = '';     // http://en.wikipedia.org/wiki/Data_URI_scheme
+    this.URI = '';     // http://en.wikipedia.org/wiki/Data_URI_scheme
 
-    this.header = {                         // OFFS SIZE NOTES
+    this.H = {                         // OFFS SIZE NOTES
         chunkId      : [0x52,0x49,0x46,0x46], // 0    4    "RIFF" = 0x52494646
         chunkSize    : 0,                     // 4    4    36+SubChunk2Size = 4+(8+SubChunk1Size)+(8+SubChunk2Size)
         format       : [0x57,0x41,0x56,0x45], // 8    4    "WAVE" = 0x57415645
@@ -231,32 +231,32 @@ var RIFFWAVE = function(data) {
         return r;
     }
 
-    this.Make = function(data) {
+    this.Mk = function(data) {
         if (data instanceof Array) this.data = data;
-        this.header.blockAlign = (this.header.numChannels * this.header.bitsPerSample) >> 3;
-        this.header.byteRate = this.header.blockAlign * this.sampleRate;
-        this.header.subChunk2Size = this.data.length * (this.header.bitsPerSample >> 3);
-        this.header.chunkSize = 36 + this.header.subChunk2Size;
+        this.H.ba = (this.H.ch * this.H.b) >> 3;
+        this.H.br = this.H.ba * this.sr;
+        this.H.ss2 = this.data.length * (this.H.b >> 3);
+        this.H.CS = 36 + this.H.ss2;
 
-        this.wav = this.header.chunkId.concat(
-            u32ToArray(this.header.chunkSize),
-            this.header.format,
-            this.header.subChunk1Id,
-            u32ToArray(this.header.subChunk1Size),
-            u16ToArray(this.header.audioFormat),
-            u16ToArray(this.header.numChannels),
-            u32ToArray(this.header.sampleRate),
-            u32ToArray(this.header.byteRate),
-            u16ToArray(this.header.blockAlign),
-            u16ToArray(this.header.bitsPerSample),    
-            this.header.subChunk2Id,
-            u32ToArray(this.header.subChunk2Size),
-            (this.header.bitsPerSample == 16) ? split16bitArray(this.data) : this.data
+        this.wav = this.H.CI.concat(
+            u32ToArray(this.H.CS),
+            this.H.f,
+            this.H.sc,
+            u32ToArray(this.H.ss),
+            u16ToArray(this.H.af),
+            u16ToArray(this.H.ch),
+            u32ToArray(this.H.sr),
+            u32ToArray(this.H.br),
+            u16ToArray(this.H.ba),
+            u16ToArray(this.H.b),
+            this.H.sc2,
+            u32ToArray(this.H.ss2),
+            (this.H.b == 16) ? split16bitArray(this.data) : this.data
         );
-        this.dataURI = 'data:audio/wav;base64,'+FastBase64.Encode(this.wav);
+        this.URI = 'data:audio/wav;base64,'+FastBase64.Encode(this.wav);
     };
 
-    if (data instanceof Array) this.Make(data);
+    if (data instanceof Array) this.Mk(data);
 
-}; // end RIFFWAVE
+}; // end RW
 playSeattle();

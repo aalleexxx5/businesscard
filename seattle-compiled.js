@@ -20,10 +20,10 @@ function PlaySeattle() {
     l.volume = .2;
     a = c(a);
     f = c(f);
-    b.Make(a);
-    p.src = b.dataURI;
-    b.Make(f);
-    l.src = b.dataURI;
+    b.Mk(a);
+    p.src = b.URI;
+    b.Mk(f);
+    l.src = b.URI;
     setTimeout(function () {
         p.play()
     }, 250 * e.length);
@@ -32,10 +32,10 @@ function PlaySeattle() {
     }, 10)
 }
 var FastBase64 = {
-    chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", encLookup: [], Init: function () {
-        for (var c = 0; 4096 > c; c++)this.encLookup[c] = this.chars[c >> 6] + this.chars[c & 63]
+    chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", eL: [], Init: function () {
+        for (var c = 0; 4096 > c; c++)this.eL[c] = this.chars[c >> 6] + this.chars[c & 63]
     }, Encode: function (c) {
-        for (var b = c.length, d = "", e = 0; 2 < b;)n = c[e] << 16 | c[e + 1] << 8 | c[e + 2], d += this.encLookup[n >> 12] + this.encLookup[n & 4095], b -= 3, e += 3;
+        for (var b = c.length, d = "", e = 0; 2 < b;)n = c[e] << 16 | c[e + 1] << 8 | c[e + 2], d += this.eL[n >> 12] + this.eL[n & 4095], b -= 3, e += 3;
         if (0 < b) {
             var a = (c[e] & 252) >> 2, f = (c[e] & 3) << 4;
             1 < b && (f |= (c[++e] & 240) >> 4);
@@ -66,8 +66,8 @@ var RIFFWAVE = function (c) {
 
     this.data = [];
     this.wav = [];
-    this.dataURI = "";
-    this.header = {
+    this.URI = "";
+    this.H = {
         chunkId: [82, 73, 70, 70],
         chunkSize: 0,
         format: [87, 65, 86, 69],
@@ -82,15 +82,15 @@ var RIFFWAVE = function (c) {
         subChunk2Id: [100, 97, 116, 97],
         subChunk2Size: 0
     };
-    this.Make = function (a) {
+    this.Mk = function (a) {
         a instanceof Array && (this.data = a);
-        this.header.blockAlign = this.header.numChannels * this.header.bitsPerSample >> 3;
-        this.header.byteRate = this.header.blockAlign * this.sampleRate;
-        this.header.subChunk2Size = this.data.length * (this.header.bitsPerSample >> 3);
-        this.header.chunkSize = 36 + this.header.subChunk2Size;
-        this.wav = this.header.chunkId.concat(b(this.header.chunkSize), this.header.format, this.header.subChunk1Id, b(this.header.subChunk1Size), d(this.header.audioFormat), d(this.header.numChannels),
-            b(this.header.sampleRate), b(this.header.byteRate), d(this.header.blockAlign), d(this.header.bitsPerSample), this.header.subChunk2Id, b(this.header.subChunk2Size), 16 == this.header.bitsPerSample ? e(this.data) : this.data);
-        this.dataURI = "data:audio/wav;base64," + FastBase64.Encode(this.wav)
+        this.H.ba = this.H.ch * this.H.b >> 3;
+        this.H.br = this.H.ba * this.sr;
+        this.H.ss2 = this.data.length * (this.H.b >> 3);
+        this.H.CS = 36 + this.H.ss2;
+        this.wav = this.H.CI.concat(b(this.H.CS), this.H.f, this.H.sc, b(this.H.ss), d(this.H.af), d(this.H.ch),
+            b(this.H.sr), b(this.H.br), d(this.H.ba), d(this.H.b), this.H.sc2, b(this.H.ss2), 16 == this.H.b ? e(this.data) : this.data);
+        this.URI = "data:audio/wav;base64," + FastBase64.Encode(this.wav)
     };
-    c instanceof Array && this.Make(c)
+    c instanceof Array && this.Mk(c)
 };

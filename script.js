@@ -104,8 +104,8 @@ function draw(){ //runes every Frame by browser
     if(glow>0&&glow<=1){
         drawGlowEffect();
     }
-//    ctx.fillStyle="#ffffff";
-//    ctx.fillText(t.toString(),50,50);
+//    x.fillStyle="#ffffff";
+//    x.fillText(t.toString(),50,50);
     for(var i=0;i<boxes.length;i++){
         ctx.save();
         ctx.translate(boxes[i].x+SIZE_OF_SQUARE/2,boxes[i].y+SIZE_OF_SQUARE/2);
