@@ -1,6 +1,6 @@
-var c,x, SS,SQ,t,gl= 0,an,g=true, wh= 0, mp, iC, w=window, bl, tx=-2,ww,h1;
-var h = ["Cold facts","Skills", "Likes/Dislikes","Traits", "hot header"];
-var io = ["Sex: Male*Born in: September 1996*Nationality: Danish*Current Occupation: Student*Contact at: alexx4387@gmail.com","Abilities span a variety of programming languages*Lacking in Maths skills*Good at puzzles","Enjoys: Coding, Video games and traveling*Does not like: Coffee, Crowded places and Getting up early", "Passionate*Introverted*Optimistic*Does not drink alcohol","Consumes energy drinks when programming*Gets very passionate about a single project*Enjoys a Good story"];
+var c,x, SS,SQ,t,gl= 0,an,g=true, wh= 0, mp, iC, w=window, bl, tx=-2,ww,h1,d=document;
+var h = ["Cold facts","Skills", "Likes/Dislikes","Traits", "Habits"];
+var io = ["Sex: Male*Nationality: Danish*Born in: September 1996*Current Occupation: Student*Contact at: alexx4387@gmail.com","Abilities span a variety of programming languages*Lacking in Maths skills*Good at puzzles","Enjoys: Programming, Video games, Coloured lights and Owl City*Does not like: Coffee, Crowded places and Getting up early", "Passionate*Introverted*Optimistic","Consumes energy drinks when programming*Gets very passionate about a single project*Enjoys a good story, book film or game*Does not drink alcohol"];
 var bx = [];
 var o="rgba(255,255,255,", tr = "transparent",bg="#141221";
 var CX,CY;
@@ -10,7 +10,6 @@ var IR = 0.25;
 var GD=1000;
 var f= 0,s=44100;
 var M=Math,P= M.PI;
-Go();
 
 function Rz() {
     h1= w.innerHeight;
@@ -24,22 +23,25 @@ function Rz() {
     Fs(bg);
     Fr(0, 0, ww, h1);
     if (bx[0] != undefined) {
-        if (bx[0].s > SQ) {
+        if (bx[0].s > SQ || (bx.s!=SQ && iC)) {
             for (var i = 0; i < bl; i++) {
                 bx[i].s = SQ;
+                bx[i].x = CX + (i * SQ) - (2 * SQ + SQ / 2);
+                bx[i].y = CY - SQ / 2;
             }
-        }
-        for (i = 0; i < bl; i++) {
-            bx[i].x = CX + (i * SQ * 1.5) - (2 * SQ * 1.5 + SQ / 2);
-            bx[i].y = CY - SQ / 2;
+        } else {
+            for (i = 0; i < bl; i++) {
+                bx[i].x = CX + (i * SQ*1.5) - (2 * SQ * 1.5 + SQ / 2);
+                bx[i].y = CY - SQ / 2;
+            }
         }
     }
 }
 function Go() {
-    c = document.getElementById("canvas");
+    c = d.getElementById("canvas");
     x = c.getContext("2d");
     Rz();
-    w.addEventListener("Rz", Rz, false);
+    w.addEventListener("resize", Rz, false);
     Fs(CG(1));
 
     Fr(10, 10, SS, SQ);
@@ -137,20 +139,20 @@ function Dr(){ //runes every Frame by browser
 function Dt(hr, tx){
     x.save();
     Tr(bx[0].x, CY-SQ/2);
-    x.font="small-caps 56px Arial";
+    x.font="small-caps "+SQ/3+"px Arial";
     x.strokeStyle=CGr(0);
     x.strokeText(hr,0,0);
-    x.font="24px Arial";
+    x.font=+SQ/8+"px Arial";
     Fs("#545251");
     Tr(0,SQ);
     while(tx.contains('*')){
         var i = tx.indexOf('*');
         var t=tx.substring(0,i);
         tx=tx.substring(i+1);
-        Tr(0,24);
+        Tr(0,SQ/8);
         x.fillText(t,0,0);
     }
-    Tr(0,24);
+    Tr(0,SQ/8);
     x.fillText(tx,0,0);
     x.restore();
 }
@@ -291,7 +293,7 @@ function PS(){
     var samplesB =[];
     var kicks=[];
     var claps = [];
-    var openingBeats=[];
+//    var openingBeats=[];
     var test=[];
 
     var samples_length;               // Plays for 1 second (44.1 KHz)
@@ -300,7 +302,7 @@ function PS(){
         for (var i=0; i < samples_length ; i++) { // fills array with samples
             var sl = samples.length;
             var t = i/samples_length;               // time from 0 to 1
-            samples[sl] =0.1 * M.sin( seattleFrequencies[f] * 2*P*(i/s)); // wave equation (between -1,+1)
+            samples[sl] =.3*M.sin( seattleFrequencies[f] * 2*P*(i/s)); // wave equation (between -1,+1)
             samples[sl] *= ((1-(t)));                    // "fade" effect (from 1 to 0)
         }
     }
@@ -332,11 +334,7 @@ function PS(){
         samples_length=s*kickTimings[f];
         for (i=0; i < samples_length ; i++) { // fills array with samples
             var kl=kicks.length;
-            if(i<s/4) {
-                kicks[kl] = M.pow(2.8, -(i / 3000)) * M.sin((58.27 / 2) * 2 * P * (i / s)); // wave equation (between -1,+1)
-            }else{
-                kicks[kl]=0
-            }
+                kicks[kl] = M.pow(2.8, -(i / 2500)) * M.sin((58.27 / 2) * 2 * P * (i / s)); // wave equation (between -1,+1)
         }
     }
     samples_length=44100*2;
@@ -347,7 +345,7 @@ function PS(){
     samples_length=s*10;
     for (i=0; i < samples_length ; i++) { // fills array with samples
         f=(M.pow(2.72,i/s)+50);
-        var longnum=100000
+        var longnum=100000;
         test[test.length] =0.4*(M.sin( f * 2*P*(i/s))+2*((i/(longnum/f))-M.floor(0.5+(i/(longnum/f))))/2); // wave equation (between -1,+1)
     }//(M.sin( f * 2*P*(i/44100))+
 
@@ -385,17 +383,14 @@ function PS(){
      samples[i]=;
      }*/
 
-    var wave = new RW();
-    var audio = new Audio();
-    var audio2 = new Audio();
+    var audio = d.createElement("AUDIO");
+    var audio2 = d.createElement("AUDIO");
     audio.loop=true;
     audio2.loop=true;
     var samples2=c16(samples);
     var samples3=c16(samples1);
-    wave.Mk(samples2);
-    audio.src=wave.URI;
-    wave.Mk(samples3);
-    audio2.src=wave.URI;
+    audio.src=RW(samples2);
+    audio2.src=RW(samples3);
     setTimeout(function() { audio.play(); }, (arpTempo*1000*al)*2); // page needs time to load?
     setTimeout(function() { audio2.play(); }, 10); // page needs time to load?
     setTimeout(function() { audio2.loop=false; }, (arpTempo*1000*al+200)); // page needs time to load?
@@ -411,24 +406,25 @@ function PS(){
     }
 }
 
-var FastBase64 = {
+function FastBase64(src) {
 
-    chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-    eL: [],
+    var chars= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    var eL= [];
 
-    Init: function() {
         for (var i=0; i<4096; i++) {
-            this.eL[i] = this.chars[i >> 6] + this.chars[i & 0x3F];
+            eL[i] = chars[i >> 6] + chars[i & 0x3F];
         }
-    },
 
-    Encode: function(src) {
+    /**
+     * @return {string}
+     */
+    function Encode(src) {
         var len = src.length;
-        var dst = '';
+        var dst = '',n;
         var i = 0;
         while (len > 2) {
             n = (src[i] << 16) | (src[i+1]<<8) | src[i+2];
-            dst+= this.eL[n >> 12] + this.eL[n & 0xFFF];
+            dst+= eL[n >> 12] + eL[n & 0xFFF];
             len-= 3;
             i+= 3;
         }
@@ -436,30 +432,29 @@ var FastBase64 = {
             var n1= (src[i] & 0xFC) >> 2;
             var n2= (src[i] & 0x03) << 4;
             if (len > 1) n2 |= (src[++i] & 0xF0) >> 4;
-            dst+= this.chars[n1];
-            dst+= this.chars[n2];
+            dst+= chars[n1];
+            dst+= chars[n2];
             if (len == 2) {
                 var n3= (src[i++] & 0x0F) << 2;
                 n3 |= (src[i] & 0xC0) >> 6;
-                dst+= this.chars[n3];
+                dst+= chars[n3];
             }
             if (len == 1) dst+= '=';
             dst+= '=';
         }
         return dst;
     } // end Encode
+    return Encode(src);
+}
 
-};
 
-FastBase64.Init();
+function RW(da) {
 
-var RW = function(da) {
+    var data = [];        // Array containing audio samples
+    var wav = [];         // Array containing the generated wave file
+    var URI = '';     // http://en.wikipedia.org/wiki/Data_URI_scheme
 
-    this.data = [];        // Array containing audio samples
-    this.wav = [];         // Array containing the generated wave file
-    this.URI = '';     // http://en.wikipedia.org/wiki/Data_URI_scheme
-
-    this.H = {                         // OFFS SIZE NOTES
+    var H = {                         // OFFS SIZE NOTES
         CI      : [0x52,0x49,0x46,0x46], // 0    4    "RIFF" = 0x52494646
         CS    : 0,                     // 4    4    36+SubChunk2Size = 4+(8+SubChunk1Size)+(8+SubChunk2Size)
         f       : [0x57,0x41,0x56,0x45], // 8    4    "WAVE" = 0x57415645
@@ -493,32 +488,31 @@ var RW = function(da) {
         }
         return r;
     }
+    function Mk(k) {
+        data = k;
+        H.ba = (H.ch * H.b) >> 3;
+        H.br = H.ba * H.sr;
+        H.ss2 = data.length * (H.b >> 3);
+        H.CS = 36 + H.ss2;
 
-    this.Mk = function(k) {
-        if (k instanceof Array) this.data = k;
-        this.H.ba = (this.H.ch * this.H.b) >> 3;
-        this.H.br = this.H.ba * this.sr;
-        this.H.ss2 = this.data.length * (this.H.b >> 3);
-        this.H.CS = 36 + this.H.ss2;
-
-        this.wav = this.H.CI.concat(
-            U32(this.H.CS),
-            this.H.f,
-            this.H.sc,
-            U32(this.H.ss),
-            u16(this.H.af),
-            u16(this.H.ch),
-            U32(this.H.sr),
-            U32(this.H.br),
-            u16(this.H.ba),
-            u16(this.H.b),
-            this.H.sc2,
-            U32(this.H.ss2),
-            (this.H.b == 16) ? s16(this.data) : this.data
+        wav = H.CI.concat(
+            U32(H.CS),
+            H.f,
+            H.sc,
+            U32(H.ss),
+            u16(H.af),
+            u16(H.ch),
+            U32(H.sr),
+            U32(H.br),
+            u16(H.ba),
+            u16(H.b),
+            H.sc2,
+            U32(H.ss2),
+            (H.b == 16) ? s16(data) : data
         );
-        this.URI = 'data:audio/wav;base64,'+FastBase64.Encode(this.wav);
-    };
+        return 'data:audio/wav;base64,'+FastBase64(wav);
+    }
+    return Mk(da);
 
-    if (da instanceof Array) this.Mk(da);
-
-}; // end RW
+} // end RW
+Go();
